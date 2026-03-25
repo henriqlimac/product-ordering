@@ -1,5 +1,6 @@
 package com.henriqlimac.posbjpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serial;
@@ -30,6 +31,9 @@ public class Product implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private Set<Category> categories = new HashSet<Category>();
+
+    @OneToMany(mappedBy = "id.product")
+    private Set<OrderItem> items = new HashSet<>();
 
     public Product() {
     }
@@ -79,6 +83,17 @@ public class Product implements Serializable {
 
     public Long getId() {
         return id;
+    }
+
+    @JsonIgnore
+    public Set<Order> getOrders() {
+        Set<Order> set = new HashSet<>();
+
+        for  (OrderItem orderItem : items) {
+            set.add(orderItem.getOrder());
+        }
+
+        return set;
     }
 
     @Override
